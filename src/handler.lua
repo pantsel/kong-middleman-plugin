@@ -10,7 +10,7 @@ local get_body = ngx.req.get_body_data
 
 local MiddlemanHandler = BasePlugin:extend()
 
-MiddlemanHandler.PRIORITY = 2000
+MiddlemanHandler.PRIORITY = 900
 
 function MiddlemanHandler:new()
   MiddlemanHandler.super.new(self, "middleman")
@@ -27,8 +27,7 @@ function MiddlemanHandler:access(conf)
   local raw_json_headers    = JSON:encode(headers)
   local raw_json_uri_args    = JSON:encode(uri_args)
   local raw_json_body_data    = JSON:encode(body_data)
-  
-  local path = post_url
+
   local payload = [[ {"headers":]] .. raw_json_headers .. [[,"uri_args":]] .. raw_json_uri_args.. [[,"body_data":]] .. raw_json_body_data .. [[} ]]
   
   local response_body = { }

@@ -1,36 +1,79 @@
-#Kong plugin template
+#Kong Middleman
 
-This repository contains a very simple Kong plugin template to get you
-up and running quickly for developing your own plugins.
+A Kong plugin that enables an extra HTTP POST request before proxying the original.
 
-This readme assumes Kong version 0.9 (and possibly above)
+## Description
 
-##Installation
+In some cases, you may need to validate a request to a separate server or service using custom logic before Kong proxies it to your API.
+Middleman enables you to do that by allowing you to make an extra HTTP request before calling an API endpoint.
 
-1. install Kong and make sure it is starting and stopping properly
-2. clone this repo
-3. scan `handler.lua` for 'TODO' comments and fix those
-4. scan `rockspec` file for 'TODO' comments and fix those
-5. rename the rockspec file according to the packagename and version as set in the rockspec
-6. execute `luarocks make` from the root of the repo, to install the plugin
-7. execute `export KONG_CUSTOM_PLUGINS=yourPluginName` (or alternatively update the Kong configuration file)
-8. start Kong with the `--vv` option, which should show the plugin being loaded
+## Configuration
 
-##troubleshooting
-Most common problem is Kong not loading the plugin. If you're not sure, check the `handler.lua` file, and 
-uncomment the assertion at the top. Execute `luarocks make` again, and restart Kong.
-Now Kong should fail with an error that the plugin threw in the `init_by_lua` phase.
+You can add the plugin on top of an API by executing the following request on your Kong server:
 
-If Kong doesn't run the plugin, then do `export KONG_CUSTOM_PLUGINS=yourPluginName` and restart Kong.
-If it now does fail with the error mentioned above, then your configuration used to start Kong was wrong.
-Use `unset KONG_CUSTOM_PLUGINS` to clear the enviornment variable, and fix your configuration file until 
-you get the error.
+<pre>
+$ curl -X POST http://kong:8001/apis/{api}/plugins \
+    --data "name=middleman" \
+    --data "config.url=http://myserver.io/validate"
+</pre>
 
-If Kong complains that the plugin is enabled, but it cannot find it, then the LUA_PATH settings are 
-incorrect or the plugin is installed in the wrong location.
-Make sure to use the LuaRocks version/installation that also is configured for Kong. Try `luarocks list kong` to see 
-whether Kong is listed in the list of installed rocks. If it isn't, then you're installing your plugin in the wrong
-LuaRocks tree. Possible causes would be existing lua/luarocks installation before Kong was installed.
+<table><thead>
+<tr>
+<th>form parameter</th>
+<th>default</th>
+<th>description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>name</code></td>
+<td></td>
+<td>The name of the plugin to use, in this case: <code>middleman</code></td>
+</tr>
+<tr>
+<td><code>config.url</code><br><em>required</em></td>
+<td></td>
+<td>The URL to which the plugin will make a JSON <code>POST</code> request before proxying the original request.</td>
+</tr>
+</tbody></table>
 
+**Middleman** plugin will execute a JSON <code>POST</code> request to the specified <code>url</code> with the following body:
 
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+    <td><code>body_data</code></td>
+    <td><small>The body of the original request</small></td>
+    </tr>
+    <tr>
+        <td><code>url_args</code></td>
+        <td><small>The url arguments of the original request</small></td>
+    </tr>
+    <tr>
+        <td><code>headers</code></td>
+        <td><small>The headers of the original request</small></td>
+    </tr>
+</table>
 
+In the scope of your own endpoint, you may validate any of these attributes and accept or reject the request according to your needs.  
+
+## Author
+Panagis Tselentis
+
+## License
+<pre>
+The MIT License (MIT)
+=====================
+
+Copyright (c) 2015 Panagis Tselentis
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+</pre>
