@@ -29,6 +29,12 @@ custom_plugins:
 
 Restart Kong and you're ready to go.
 
+## luarocks
+
+<pre>
+$ luarocks install middleman
+</pre>
+
 
 ## Configuration
 
