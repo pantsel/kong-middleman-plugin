@@ -6,7 +6,7 @@ version = "0.1.0-1"
 
 supported_platforms = {"linux", "macosx"}
 source = {
-  url = "git://github.com/Mashape/kong_plugin",
+  url = "https://github.com/pantsel/kong-middleman-plugin.git",
   tag = "0.1.0"
 }
 description = {
