@@ -1,4 +1,4 @@
-#Kong Middleman
+# Kong Middleman
 
 A Kong plugin that enables an extra HTTP POST request before proxying the original.
 
@@ -6,6 +6,29 @@ A Kong plugin that enables an extra HTTP POST request before proxying the origin
 
 In some cases, you may need to validate a request to a separate server or service using custom logic before Kong proxies it to your API.
 Middleman enables you to do that by allowing you to make an extra HTTP request before calling an API endpoint.
+
+## Installation
+
+### Development
+
+Navigate to kong/plugins folder and clone this repo
+
+<pre>
+$ cd /path/to/kong/plugins
+$ git clone https://github.com/pantsel/kong-middleman-plugin middleman
+$ cd middleman
+$ luarocks make *.rockspec
+</pre>
+
+To make Kong aware that it has to look for the middleman plugin, you'll have to add it to the custom_plugins property in your configuration file.
+
+<pre>
+custom_plugins:
+    - middleman
+</pre>
+
+Restart Kong and you're ready to go.
+
 
 ## Configuration
 
