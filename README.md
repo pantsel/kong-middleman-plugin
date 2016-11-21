@@ -36,7 +36,7 @@ $ curl -X POST http://kong:8001/apis/{api}/plugins \
 </tr>
 </tbody></table>
 
-**Middleman** plugin will execute a JSON <code>POST</code> request to the specified <code>url</code> with the following body:
+Middleman will execute a JSON <code>POST</code> request to the specified <code>url</code> with the following body:
 
 <table>
     <tr>
