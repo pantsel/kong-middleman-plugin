@@ -45,7 +45,7 @@ function _M.compose_payload()
 
     headers["target_url"] = ngx.var.request_uri
     headers["target_method"] = ngx.var.method
-    headers["test"] = "1"
+    --headers["test"] = "1"
     
     local raw_json_headers    = JSON:encode(headers)
     local raw_json_uri_args    = JSON:encode(uri_args)
