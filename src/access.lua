@@ -11,7 +11,7 @@ local _M = {}
 
 function _M.execute(conf)    
     local post_url = conf.url  
-    local payload = _M.getPayload()
+    local payload = _M.compose_payload()
     
     local response_body = { }
     
@@ -19,7 +19,7 @@ function _M.execute(conf)
     {
       url = post_url,
       method = "POST",
-      headers = _M.getHeaders(payload:len()),
+      headers = _M.compose_headers(payload:len()),
       source = ltn12.source.string(payload),
       sink = ltn12.sink.table(response_body)
     }
@@ -31,17 +31,21 @@ function _M.execute(conf)
 
 end
 
-function _M.getHeaders(len)
+function _M.compose_headers(len)
     return {
       ["Content-Type"] = "application/json",
       ["Content-Length"] = len
     }
 end
 
-function _M.getPayload()
+function _M.compose_payload()
     local headers = get_headers()
     local uri_args = get_uri_args()
     local body_data = get_body()
+
+    headers["target_url"] = ngx.var.request_uri
+    headers["target_method"] = ngx.var.method
+    headers["test"] = "1"
     
     local raw_json_headers    = JSON:encode(headers)
     local raw_json_uri_args    = JSON:encode(uri_args)
