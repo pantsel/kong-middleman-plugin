@@ -44,7 +44,7 @@ function _M.compose_payload()
     local body_data = get_body()
 
     --headers["target_uri"] = ngx.var.request_uri
-    headers["target_method"] = get_method()
+    --headers["target_method"] = get_method()
     headers["test"] = "1"
     
     local raw_json_headers    = JSON:encode(headers)
