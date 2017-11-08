@@ -1,7 +1,7 @@
 local responses = require "kong.tools.responses"
 local http = require"socket.http"
 local ltn12 = require"ltn12"
-local json = require "kong.plugins.middleman.json"
+local JSON = require "kong.plugins.middleman.json"
 
 local get_headers = ngx.req.get_headers
 local get_uri_args = ngx.req.get_uri_args
