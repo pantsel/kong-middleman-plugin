@@ -86,7 +86,7 @@ Middleman will execute a JSON <code>POST</code> request to the specified <code>u
     </tr>
 </table>
 
-In the scope of your own endpoint, you may validate any of these attributes and accept or reject the request according to your needs.  
+In the scope of your own endpoint, you may validate any of these attributes and accept or reject the request according to your needs. If an HTTP response code of 299 or less is returned, the request is accepted. Any response code above 299 will cause the request to be rejected.  
 
 ## Author
 Panagis Tselentis
