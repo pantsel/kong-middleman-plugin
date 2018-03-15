@@ -5,6 +5,7 @@ local JSON = require "kong.plugins.middleman.json"
 
 local get_headers = ngx.req.get_headers
 local get_uri_args = ngx.req.get_uri_args
+local read_body = ngx.req.read_body
 local get_body = ngx.req.get_body_data
 
 local _M = {}
@@ -41,6 +42,7 @@ end
 function _M.compose_payload()
     local headers = get_headers()
     local uri_args = get_uri_args()
+    read_body()
     local body_data = get_body()
 
     headers["target_uri"] = ngx.var.request_uri
