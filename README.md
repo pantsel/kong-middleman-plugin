@@ -44,6 +44,8 @@ You can add the plugin on top of an API by executing the following request on yo
 $ curl -X POST http://kong:8001/apis/{api}/plugins \
     --data "name=middleman" \
     --data "config.url=http://myserver.io/validate"
+    --data "config.timeout=10000"
+    --data "config.keepalive=60000"
 </pre>
 
 <table><thead>
@@ -62,6 +64,16 @@ $ curl -X POST http://kong:8001/apis/{api}/plugins \
 <td><code>config.url</code><br><em>required</em></td>
 <td></td>
 <td>The URL to which the plugin will make a JSON <code>POST</code> request before proxying the original request.</td>
+</tr>
+<tr>
+<td><code>config.timeout</code></td>
+<td></td>
+<td>Timeout (miliseconds) for the request to the URL specified above. Default value is 10000.</td>
+</tr>
+<tr>
+<td><code>config.keepalive</code></td>
+<td></td>
+<td>Keepalive time (miliseconds) for the request to the URL specified above. Default value is 60000.</td>
 </tr>
 </tbody></table>
 
