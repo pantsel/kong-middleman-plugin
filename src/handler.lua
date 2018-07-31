@@ -10,7 +10,7 @@ function MiddlemanHandler:new()
 end
 
 function MiddlemanHandler:access(conf)
-    MiddlemanHandler.super.access(self)
+  MiddlemanHandler.super.access(self)
   access.execute(conf)
 end
 
