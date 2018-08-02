@@ -9,6 +9,8 @@ local get_headers = ngx.req.get_headers
 local get_uri_args = ngx.req.get_uri_args
 local read_body = ngx.req.read_body
 local get_body = ngx.req.get_body_data
+local ngx_re_match = ngx.re.match
+local ngx_re_find = ngx.re.find
 
 local HTTP = "http"
 local HTTPS = "https"
@@ -59,14 +61,35 @@ function _M.execute(conf)
     ngx.log(ngx.ERR, name .. "failed to send data to " .. host .. ":" .. tostring(port) .. ": ", err)
   end
 
-  local status_line, err = sock:receive("*l")
+  local line, err = sock:receive("*l")
 
   if err then 
     ngx.log(ngx.ERR, name .. "failed to read response status from " .. host .. ":" .. tostring(port) .. ": ", err)
     return
   end
 
-  local status_code = tonumber(string.match(status_line, "%s(%d%d%d)%s"))
+  local status_code = tonumber(string.match(line, "%s(%d%d%d)%s"))
+  local headers = {}
+
+  repeat
+    line, err = sock:receive("*l")
+    if err then
+      ngx.log(ngx.ERR, name .. "failed to read header " .. host .. ":" .. tostring(port) .. ": ", err)
+      return
+    end
+
+    local pair = ngx_re_match(line, "(.*):\\s*(.*)", "jo")
+
+    if pair then
+      headers[string.lower(pair[1])] = pair[2]
+    end
+  until ngx_re_find(line, "^\\s*$", "jo")
+
+  local body, err = sock:receive(tonumber(headers['content-length']))
+  if err then
+    ngx.log(ngx.ERR, name .. "failed to read body " .. host .. ":" .. tostring(port) .. ": ", err)
+    return
+  end
 
   ok, err = sock:setkeepalive(conf.keepalive)
   if not ok then
@@ -75,13 +98,11 @@ function _M.execute(conf)
   end
 
   if status_code > 299 then
-    local response, err = sock:receive("*a")
-
     if err then 
       ngx.log(ngx.ERR, name .. "failed to read response from " .. host .. ":" .. tostring(port) .. ": ", err)
     end
 
-    return responses.send(status, string.match(response, "%b{}"))
+    return responses.send(status_code, string.match(body, "%b{}"))
   end
 
 end
