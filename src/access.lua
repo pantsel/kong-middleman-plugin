@@ -9,6 +9,7 @@ local get_headers = ngx.req.get_headers
 local get_uri_args = ngx.req.get_uri_args
 local read_body = ngx.req.read_body
 local get_body = ngx.req.get_body_data
+local get_method = ngx.req.get_method
 local ngx_re_match = ngx.re.match
 local ngx_re_find = ngx.re.find
 
@@ -33,6 +34,10 @@ local function parse_url(host_url)
 end
 
 function _M.execute(conf)
+  if not conf.run_on_preflight and get_method() == "OPTIONS" then
+    return
+  end
+
   local name = "[middleman] "
   local ok, err
   local parsed_url = parse_url(conf.url)
