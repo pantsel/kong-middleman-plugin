@@ -44,6 +44,7 @@ You can add the plugin on top of an API by executing the following request on yo
 $ curl -X POST http://kong:8001/apis/{api}/plugins \
     --data "name=middleman" \
     --data "config.url=http://myserver.io/validate"
+    --data "config.response=table"
     --data "config.timeout=10000"
     --data "config.keepalive=60000"
 </pre>
@@ -64,6 +65,11 @@ $ curl -X POST http://kong:8001/apis/{api}/plugins \
 <td><code>config.url</code><br><em>required</em></td>
 <td></td>
 <td>The URL to which the plugin will make a JSON <code>POST</code> request before proxying the original request.</td>
+</tr>
+<tr>
+<td><code>config.response</code><br><em>required</em></td>
+<td></td>
+<td>The type of response the middleman service is going to respond with</td>
 </tr>
 <tr>
 <td><code>config.timeout</code></td>
