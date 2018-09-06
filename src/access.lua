@@ -107,7 +107,14 @@ function _M.execute(conf)
       ngx.log(ngx.ERR, name .. "failed to read response from " .. host .. ":" .. tostring(port) .. ": ", err)
     end
 
-    return responses.send(status_code, string.match(body, "%b{}"))
+    local response_body
+    if conf.response == "table" then 
+      response_body = JSON:decode(string.match(body, "%b{}"))
+    else
+      response_body = string.match(body, "%b{}")
+    end
+
+    return responses.send(status_code, response_body)
   end
 
 end
