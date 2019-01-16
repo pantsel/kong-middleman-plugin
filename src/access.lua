@@ -1,9 +1,10 @@
-local responses = require "kong.tools.responses"
 local JSON = require "kong.plugins.middleman.json"
 local cjson = require "cjson"
 local url = require "socket.url"
 
 local string_format = string.format
+
+local kong_response = kong.response
 
 local get_headers = ngx.req.get_headers
 local get_uri_args = ngx.req.get_uri_args
@@ -114,7 +115,7 @@ function _M.execute(conf)
       response_body = string.match(body, "%b{}")
     end
 
-    return responses.send(status_code, response_body)
+    return kong_response.send(status_code, response_body)
   end
 
 end
