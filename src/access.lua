@@ -13,8 +13,6 @@ local get_body = ngx.req.get_body_data
 local get_method = ngx.req.get_method
 local ngx_re_match = ngx.re.match
 local ngx_re_find = ngx.re.find
-local ngx_set_header = ngx.req.set_header
-local pairs = pairs
 
 local HTTP = "http"
 local HTTPS = "https"
@@ -70,16 +68,13 @@ function _M.execute(conf)
   end
 
   local line, err = sock:receive("*l")
+
   if err then 
     ngx.log(ngx.ERR, name .. "failed to read response status from " .. host .. ":" .. tostring(port) .. ": ", err)
-    return kong_response.exit(500, "internal error")
+    return
   end
 
   local status_code = tonumber(string.match(line, "%s(%d%d%d)%s"))
-  if status_code > 299 then
-    return kong_response.exit(status_code, "internal error")
-  end
-
   local headers = {}
 
   repeat
@@ -89,7 +84,7 @@ function _M.execute(conf)
       return
     end
 
-    local pair = ngx_re_match(line, "([^:\\s]+):\\s*(.*)", "jo")
+    local pair = ngx_re_match(line, "(.*):\\s*(.*)", "jo")
 
     if pair then
       headers[string.lower(pair[1])] = pair[2]
@@ -99,30 +94,30 @@ function _M.execute(conf)
   local body, err = sock:receive(tonumber(headers['content-length']))
   if err then
     ngx.log(ngx.ERR, name .. "failed to read body " .. host .. ":" .. tostring(port) .. ": ", err)
-    return kong_response.exit(500, "failed to read body")
+    return
   end
 
   ok, err = sock:setkeepalive(conf.keepalive)
   if not ok then
     ngx.log(ngx.ERR, name .. "failed to keepalive to " .. host .. ":" .. tostring(port) .. ": ", err)
-    return kong_response.exit(500, "failed to keepalive to host")
+    return
   end
 
-  if status_code == 200 then
-    local response_params = {}
-    for key, value in pairs(JSON:decode(string.match(body, "%b{}"))) do
-      response_params[string.lower(key)] = value
+  if status_code > 299 then
+    if err then 
+      ngx.log(ngx.ERR, name .. "failed to read response from " .. host .. ":" .. tostring(port) .. ": ", err)
     end
 
-    if response_params['code'] == 200
-      for key, value in response_params do
-        ngx_set_header("Introspection-" .. string.gsub(key, "_", "-"), value)
-      end
-      return
+    local response_body
+    if conf.response == "table" then 
+      response_body = JSON:decode(string.match(body, "%b{}"))
     else
-      return kong_response.exit(response_params['code'], "failed to authenticate token")
+      response_body = string.match(body, "%b{}")
     end
+
+    return kong_response.send(status_code, response_body)
   end
+
 end
 
 function _M.compose_payload(parsed_url)
