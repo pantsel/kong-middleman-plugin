@@ -115,7 +115,7 @@ function _M.execute(conf)
       response_body = string.match(body, "%b{}")
     end
 
-    return kong_response.send(status_code, response_body)
+    return kong_response.exit(status_code, response_body)
   end
 
 end
