@@ -81,6 +81,11 @@ $ curl -X POST http://kong:8001/apis/{api}/plugins \
 <td></td>
 <td>Keepalive time (miliseconds) for the request to the URL specified above. Default value is 60000.</td>
 </tr>
+<tr>
+<td><code>config.include_body</code></td>
+<td></td>
+<td>Include body in request.</td>
+</tr>
 </tbody></table>
 
 Middleman will execute a JSON <code>POST</code> request to the specified <code>url</code> with the following body:
@@ -91,7 +96,7 @@ Middleman will execute a JSON <code>POST</code> request to the specified <code>u
         <th>Description</th>
     </tr>
     <tr>
-    <td><code>body_data</code></td>
+    <td><code>body_data (optional)</code></td>
     <td><small>The body of the original request</small></td>
     </tr>
     <tr>
