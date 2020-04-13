@@ -84,7 +84,7 @@ $ curl -X POST http://kong:8001/apis/{api}/plugins \
 <tr>
 <td><code>config.include_body</code></td>
 <td></td>
-<td>Include body in request.</td>
+<td>Include body in request. Default value is true.</td>
 </tr>
 </tbody></table>
 
