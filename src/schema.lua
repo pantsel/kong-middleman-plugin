@@ -5,6 +5,6 @@ return {
     response = { required = true, default = "table", type = "string", enum = {"table", "string"}},
     timeout = { default = 10000, type = "number" },
     keepalive = { default = 60000, type = "number" },
-    include_body = { default = true, type = "bool" }
+    include_body = { default = true, type = "boolean" }
   }
 }
